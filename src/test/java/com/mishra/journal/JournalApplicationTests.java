@@ -1,6 +1,6 @@
 package com.mishra.journal;
 
-import com.mishra.journal.entity.User;
+import com.mishra.journal.dto.User;
 import com.mishra.journal.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
