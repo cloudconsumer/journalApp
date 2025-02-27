@@ -1,7 +1,9 @@
 package com.mishra.journal.controller;
 
+import com.mishra.journal.api.response.WeatherResponse;
 import com.mishra.journal.entity.User;
 import com.mishra.journal.service.UserService;
+import com.mishra.journal.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -16,9 +19,11 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private WeatherService weatherService;
 
     @GetMapping("/get")
-    public ResponseEntity<?> getOne() {
+    public ResponseEntity<User> getOne() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         Optional<User> user = userService.getUserByName(username);
@@ -26,7 +31,7 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody User newUser) {
+    public ResponseEntity<User> update(@RequestBody User newUser) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         try{
@@ -37,10 +42,26 @@ public class UserController {
         }
     }
     @DeleteMapping("/delete")
-    public ResponseEntity<?> delete() {
+    public ResponseEntity<Boolean> delete() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         userService.deleteUser(authentication.getName());
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/weather")
+    public ResponseEntity<String> getWeather() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            String city = "Hyderabad";
+            WeatherResponse response = weatherService.getCurrentWeather(city);
+            String weatherInfo = "";
+            if (response != null)
+                weatherInfo = String.valueOf(response.getCurrent().getFeelslike());
+            return new ResponseEntity<>(String.format("Hi %s, the weather in %s feels like %s", username, city, weatherInfo), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }
 

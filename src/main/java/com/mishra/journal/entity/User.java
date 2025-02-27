@@ -1,8 +1,8 @@
 package com.mishra.journal.entity;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Document(collection = "user")
 @Data
-@Builder
+@NoArgsConstructor
 public class User {
     @Id
     private ObjectId id;
