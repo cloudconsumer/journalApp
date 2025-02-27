@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration>
+
+    <property name="LOG_PATH" value="./logs" />
+    <property name="LOG_FILE" value="${LOG_PATH}/myJournalApp.log" />
+
+    <appender name="myConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{dd-MM-yyyy HH:mm:ss}] [%-5level] [%logger{36}] --> %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="myFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/myJournalApp-%d{yyyy-MM-dd hh-MM}.%i.log</fileNamePattern>
+            <maxFileSize>4MB</maxFileSize>
+            <maxHistory>4</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{dd-MM-yyyyy HH:mm:ss}] [%-5level] [%logger{36}] --> %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="ERROR">
+        <appender-ref ref="myConsoleAppender"/>
+        <appender-ref ref="myFileAppender"/>
+    </root>
+
+</configuration>
