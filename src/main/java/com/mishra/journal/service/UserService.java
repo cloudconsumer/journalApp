@@ -15,7 +15,7 @@ import java.util.Optional;
 @Slf4j
 public class UserService {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -34,16 +34,16 @@ public class UserService {
         userRepository.save(newUser);
     }
 
-    public boolean deleteUser(String username) {
+    public void deleteUser(String username) {
         userRepository.deleteByUsername(username);
-        return true;
     }
 
     public void updateUser(String username, User newUser) {
         User oldUser = getUserByName(username).orElse(null);
+        assert oldUser != null;
         newUser.setId(oldUser.getId());
-        newUser.setUsername(newUser.getUsername()==null || newUser.getUsername().isEmpty() ?oldUser.getUsername():newUser.getUsername());
-        newUser.setPassword(newUser.getPassword()==null || newUser.getPassword().isEmpty() ?oldUser.getPassword():newUser.getPassword());
+        newUser.setUsername(newUser.getUsername().isEmpty() ?oldUser.getUsername():newUser.getUsername());
+        newUser.setPassword(newUser.getPassword().isEmpty() ?oldUser.getPassword():newUser.getPassword());
         newUser.setJournalEntries(newUser.getJournalEntries()==null ?oldUser.getJournalEntries():newUser.getJournalEntries());
         userRepository.save(newUser);
     }

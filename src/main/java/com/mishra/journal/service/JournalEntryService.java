@@ -15,10 +15,10 @@ import java.util.Optional;
 @Service
 public class JournalEntryService {
     @Autowired
-    JournalRepository journalRepository;
+    private JournalRepository journalRepository;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     public List<JournalEntry> getAllEntries() {
         return journalRepository.findAll();

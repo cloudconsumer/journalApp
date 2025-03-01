@@ -26,20 +26,15 @@ public class JournalController {
         return "Hellooooo";
     }
 
-//    @GetMapping("/get/{myID}")
-//    public ResponseEntity<?> getJournalEntry(@PathVariable ObjectId myId) {
-//        Optional<JournalEntry> entry = journalEntryService.getOneEntry(myId);
-//        return entry.map(journalEntry -> new ResponseEntity<>(journalEntry, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-//    }
     @GetMapping("/get")
-    public ResponseEntity<List<JournalEntry>> getAllJournalEntriesOfUser() {
+    public ResponseEntity<?> getAllJournalEntriesOfUser() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             List<JournalEntry> journalEntries = userService.getUserByName(username).get().getJournalEntries();
             return new ResponseEntity<>(journalEntries,HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("No entries for user",HttpStatus.NOT_FOUND);
         }
     }
     @PostMapping("/new")
@@ -48,9 +43,9 @@ public class JournalController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             journalEntryService.createEntry(newEntry,username);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>("journal created for user ",HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Something went wrong",HttpStatus.BAD_REQUEST);
         }
     }
     @PutMapping("/update/{myId}")
@@ -62,7 +57,7 @@ public class JournalController {
             journalEntryService.updateEntry(username,myId,newEntry);
             return new ResponseEntity<>(newEntry,HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Requested content unavailable",HttpStatus.NOT_FOUND);
         }
     }
     @DeleteMapping("/delete/{myId}")
@@ -71,9 +66,9 @@ public class JournalController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             journalEntryService.deleteEntry(username,myId);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("Resource deleted",HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Requested content unavailable",HttpStatus.NOT_FOUND);
         }
     }
 }

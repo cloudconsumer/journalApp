@@ -1,5 +1,6 @@
 package com.mishra.journal.controller;
 
+import com.mishra.journal.cache.JournalAppCache;
 import com.mishra.journal.entity.JournalEntry;
 import com.mishra.journal.entity.User;
 import com.mishra.journal.service.JournalEntryService;
@@ -21,11 +22,14 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private JournalAppCache appCache;
+
     @GetMapping("/all-journals")
-    public ResponseEntity<List<?>> getAllJournals() {
+    public ResponseEntity<?> getAllJournals() {
         List<JournalEntry> all = journalEntryService.getAllEntries();
         if(all.isEmpty())
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("No Content",HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(all,HttpStatus.OK);
     }
 
@@ -37,7 +41,16 @@ public class AdminController {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             return new ResponseEntity<>(all,HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("No Content ",HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/clear-app-cache")
+    public ResponseEntity<String> clearCache() {
+        try {
+            appCache.init();
+            return new ResponseEntity<>("application cache cleared ",HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("something went wrong ", HttpStatus.BAD_REQUEST);
         }
     }
 }

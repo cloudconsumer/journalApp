@@ -1,5 +1,6 @@
 package com.mishra.journal.controller;
 
+import com.mishra.journal.api.constants.Placeholders;
 import com.mishra.journal.api.response.WeatherResponse;
 import com.mishra.journal.entity.User;
 import com.mishra.journal.service.UserService;
@@ -11,8 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/user")
@@ -31,21 +32,21 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<User> update(@RequestBody User newUser) {
+    public ResponseEntity<?> update(@RequestBody User newUser) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         try{
             userService.updateUser(username,newUser);
             return new ResponseEntity<>(newUser,HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("No resource available",HttpStatus.NOT_FOUND);
         }
     }
     @DeleteMapping("/delete")
-    public ResponseEntity<Boolean> delete() {
+    public ResponseEntity<String> delete() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         userService.deleteUser(authentication.getName());
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Resource deleted ",HttpStatus.OK);
     }
 
     @GetMapping("/weather")
@@ -53,14 +54,15 @@ public class UserController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
-            String city = "Hyderabad";
+            Random random = new Random();
+            String city = Placeholders.CITY.get(random.nextInt(Placeholders.CITY.size()));
             WeatherResponse response = weatherService.getCurrentWeather(city);
             String weatherInfo = "";
             if (response != null)
                 weatherInfo = String.valueOf(response.getCurrent().getFeelslike());
             return new ResponseEntity<>(String.format("Hi %s, the weather in %s feels like %s", username, city, weatherInfo), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Something went wrong",HttpStatus.BAD_REQUEST);
         }
     }
 }
